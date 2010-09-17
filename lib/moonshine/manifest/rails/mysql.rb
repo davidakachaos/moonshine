@@ -83,6 +83,7 @@ private
   end
 
   def mysql_version
-    ubuntu_lucid? ? 5.1 : 5
+    #ubuntu_lucid? ? 5.1 : 5
+    5.1
   end
 end

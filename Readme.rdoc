@@ -1,3 +1,7 @@
+= WIP
+
+This project is a Work In Progress! Please note that I'm monkeying away on this project to convert it to a Cent OS 5 version. Please don't use it in production yet, it WILL BLOW UP! Anyway, I'm learning as I go, so bare with me.
+
 = Moonshine
 
 Moonshine is Rails deployment and configuration management done right.

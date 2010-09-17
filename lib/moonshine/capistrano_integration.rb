@@ -117,7 +117,7 @@ module Moonshine
 
           desc 'Apply the Moonshine manifest for this application'
           task :apply, :except => { :no_release => true } do
-            aptget.update
+            yum.update
             sudo "RAILS_ROOT=#{latest_release} DEPLOY_STAGE=#{ENV['DEPLOY_STAGE'] || fetch(:stage)} RAILS_ENV=#{fetch(:rails_env)} shadow_puppet #{latest_release}/app/manifests/#{fetch(:moonshine_manifest)}.rb"
           end
 
@@ -341,13 +341,13 @@ module Moonshine
             sudo 'yum install -q -y ruby'
           end
 
-          task :remove_ruby_from_apt do
+          task :remove_ruby_from_yum do
             sudo 'yum erase -q -y ^.*ruby.* || true'
             #TODO apt-pinning to ensure ruby is never installed via apt
           end
 
           task :ree do
-            remove_ruby_from_apt
+            remove_ruby_from_yum
             run [
               'cd /tmp',
               'sudo rm -rf ruby-enterprise-1.8.6-20090610* || true',
@@ -359,7 +359,7 @@ module Moonshine
           end
 
           task :ree187 do
-            remove_ruby_from_apt
+            remove_ruby_from_yum
             run [
               'cd /tmp',
               'sudo rm -rf ruby-enterprise-1.8.7-2010.02* || true',
@@ -371,7 +371,7 @@ module Moonshine
           end
 
           task :src187 do
-            remove_ruby_from_apt
+            remove_ruby_from_yum
             run [
               'cd /tmp',
               'sudo rm -rf ruby-1.8.7-p249* || true',

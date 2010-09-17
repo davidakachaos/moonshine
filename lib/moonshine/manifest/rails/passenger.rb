@@ -9,7 +9,7 @@ module Moonshine::Manifest::Rails::Passenger
   # <tt>passenger.conf.erb</tt> template for passenger configuration options.
   def passenger_apache_module
     # Install Apache2 developer library
-    package "apache2-threaded-dev", :ensure => :installed
+    package "httpd-devel", :ensure => :installed
 
     file "/usr/local/src", :ensure => :directory
 
@@ -28,42 +28,42 @@ module Moonshine::Manifest::Rails::Passenger
       :unless => "ls `passenger-config --root`/ext/apache2/mod_passenger.so",
       :require => [
         package("passenger"),
-        package("apache2-mpm-worker"),
-        package("apache2-threaded-dev"),
+        package("httpd"),
+        package("httpd-devel"),
         exec('symlink_passenger')
       ]
 
     load_template = "LoadModule passenger_module #{configuration[:passenger][:path]}/ext/apache2/mod_passenger.so"
 
-    file '/etc/apache2/mods-available/passenger.load',
+    file '/etc/httpd/conf.d/passenger.load',
       :ensure => :present,
       :content => load_template,
       :require => [exec("build_passenger")],
-      :notify => service("apache2"),
+      :notify => service("httpd"),
       :alias => "passenger_load"
 
-    file '/etc/apache2/mods-available/passenger.conf',
+    file '/etc/httpd/conf.d/passenger.conf',
       :ensure => :present,
       :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.conf.erb')),
       :require => [exec("build_passenger")],
-      :notify => service("apache2"),
+      :notify => service("httpd"),
       :alias => "passenger_conf"
 
-    a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load")]
+    #a2enmod 'passenger', :require => [exec("build_passenger"), file("passenger_conf"), file("passenger_load")]
   end
 
   # Creates and enables a vhost configuration named after your application.
   # Also ensures that the <tt>000-default</tt> vhost is disabled.
   def passenger_site
-    file "/etc/apache2/sites-available/#{configuration[:application]}",
-      :ensure => :present,
-      :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.vhost.erb')),
-      :notify => service("apache2"),
-      :alias => "passenger_vhost",
-      :require => exec("a2enmod passenger")
-
-    a2dissite '000-default', :require => file("passenger_vhost")
-    a2ensite configuration[:application], :require => file("passenger_vhost")
+    # file "/etc/apache2/sites-available/#{configuration[:application]}",
+    #      :ensure => :present,
+    #      :content => template(File.join(File.dirname(__FILE__), 'templates', 'passenger.vhost.erb')),
+    #      :notify => service("apache2"),
+    #      :alias => "passenger_vhost",
+    #      :require => exec("a2enmod passenger")
+    # 
+    #    a2dissite '000-default', :require => file("passenger_vhost")
+    #    a2ensite configuration[:application], :require => file("passenger_vhost")
   end
 
   def passenger_configure_gem_path

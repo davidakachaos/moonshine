@@ -70,23 +70,24 @@ from installing any gems, packages, or dependencies directly on the server.
   # will be sent to <tt>configuration[:user]</tt>. To exclude specific
   # packages from these upgrades, create an array of packages on
   # <tt>configuration[:unattended_upgrade][:package_blacklist]</tt>
-  def security_updates
-    configure(:unattended_upgrade => {:allowed_origins => [distro_unattended_security_origin].compact})
-    unattended_config = <<-CONFIG
-APT::Periodic::Update-Package-Lists "#{configuration[:unattended_upgrade][:package_lists]||1}";
-APT::Periodic::Unattended-Upgrade "#{configuration[:unattended_upgrade][:interval]||1}";
-CONFIG
-
-    package 'unattended-upgrades', :ensure => :latest
-    file '/etc/apt/apt.conf.d/10periodic',
-      :ensure => :present,
-      :mode => '644',
-      :content => unattended_config
-    file '/etc/apt/apt.conf.d/50unattended-upgrades',
-      :ensure => :present,
-      :mode => '644',
-      :content => template(File.join(File.dirname(__FILE__), "templates", "unattended_upgrades.erb"))
-  end
+  #TODO Port this to CentOS 5!
+  # def security_updates
+  #     configure(:unattended_upgrade => {:allowed_origins => [distro_unattended_security_origin].compact})
+  #     unattended_config = <<-CONFIG
+  # APT::Periodic::Update-Package-Lists "#{configuration[:unattended_upgrade][:package_lists]||1}";
+  # APT::Periodic::Unattended-Upgrade "#{configuration[:unattended_upgrade][:interval]||1}";
+  # CONFIG
+  # 
+  #     package 'unattended-upgrades', :ensure => :latest
+  #     file '/etc/apt/apt.conf.d/10periodic',
+  #       :ensure => :present,
+  #       :mode => '644',
+  #       :content => unattended_config
+  #     file '/etc/apt/apt.conf.d/50unattended-upgrades',
+  #       :ensure => :present,
+  #       :mode => '644',
+  #       :content => template(File.join(File.dirname(__FILE__), "templates", "unattended_upgrades.erb"))
+  #   end
 
 private
 
