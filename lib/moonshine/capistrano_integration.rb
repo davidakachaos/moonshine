@@ -334,15 +334,15 @@ module Moonshine
           end
 
           task :mri do
-            apt
+            yum
           end
 
-          task :apt do
-            sudo 'apt-get install -q -y ruby-full'
+          task :yum do
+            sudo 'yum install -q -y ruby'
           end
 
           task :remove_ruby_from_apt do
-            sudo 'apt-get remove -q -y ^.*ruby.* || true'
+            sudo 'yum erase -q -y ^.*ruby.* || true'
             #TODO apt-pinning to ensure ruby is never installed via apt
           end
 
@@ -400,8 +400,9 @@ module Moonshine
           end
 
           task :install_deps do
-            aptget.update
-            sudo 'apt-get install -q -y build-essential zlib1g-dev libssl-dev libreadline5-dev wget'
+            yum.update
+            #build-essential zlib1g-dev libssl-dev libreadline5-dev
+            sudo 'yum -y -q install zlib-devel openssl-devel openssl readline-devel readline wget'
           end
 
           task :install_moonshine_deps do
@@ -416,7 +417,7 @@ module Moonshine
         namespace :apache do
           desc 'Restarts the Apache web server'
           task :restart do
-            sudo 'service apache2 restart'
+            sudo '/etc/init.d/httpd restart'
           end
         end
 
@@ -428,13 +429,13 @@ module Moonshine
                       when 'git' then 'git-core'
                       else nil
                       end
-            sudo "apt-get -qq -y install #{package}" if package
+            sudo "yum -y -q install #{package}" if package
           end
         end
 
-        namespace :aptget do
+        namespace :yum do
           task :update do
-            sudo 'apt-get update'
+            sudo 'yum -y -q update'
           end
         end
       end
